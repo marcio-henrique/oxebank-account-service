@@ -8,7 +8,7 @@ CREATE table `users` (
 `status` int,
 `address` varchar(255),
 `password` varchar(80),
-`phone` string(50),
+`phone` varchar(50),
 `api_token` varchar(80)
 );
 
@@ -27,7 +27,7 @@ CREATE TABLE `banking_accounts` (
 `status` int,
 `balance` int,
 `password` varchar(80),
-`api_token` varchar(80)
+`api_token` varchar(80) nullable
 );
 
 ALTER TABLE `clients` ADD FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);

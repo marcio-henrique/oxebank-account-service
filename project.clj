@@ -1,16 +1,19 @@
 (defproject account-service "0.1.0-SNAPSHOT"
-  :description "FIXME: write description"
-  :url "http://example.com/FIXME"
-  :license {:name "EPL-2.0 OR GPL-2.0-or-later WITH Classpath-exception-2.0"
-            :url "https://www.eclipse.org/legal/epl-2.0/"}
-  :dependencies [[org.clojure/clojure "1.10.3"]
-                 [compojure "1.7.0"]
-                 [ring/ring-core "1.9.5"]
-                 [ring/ring-json "0.5.1"]
-                 [korma "0.4.3"]
-                 [mysql/mysql-connector-java "8.0.29"]
-                 [ring/ring-defaults "0.3.3"]]
+  :description "Demo Clojure web app"
+  :url "http://clojure-getting-started.herokuapp.com"
+  :min-lein-version "2.0.0"
+  :license {:name "Eclipse Public License v1.0"
+            :url "http://www.eclipse.org/legal/epl-v10.html"}
+  :dependencies [[org.clojure/clojure "1.10.0"]
+                 [org.clojure/java.jdbc "0.2.3"]
+                 [mysql/mysql-connector-java "5.1.44"]
+                 [http-kit "2.3.0"]
+                 [ring/ring-defaults "0.3.2"]
+                 [compojure "1.6.1"]
+                 [org.clojure/data.json "0.2.6"]
+                 [korma "0.3.0-RC5"]
+                 [cheshire "5.11.0"]
+                 ]
   :main ^:skip-aot account-service.core
   :target-path "target/%s"
-  :profiles {:uberjar {:aot :all
-                       :jvm-opts ["-Dclojure.compiler.direct-linking=true"]}})
+  :profiles {:uberjar {:aot :all}})
