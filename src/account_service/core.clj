@@ -17,6 +17,12 @@
    :body    (->>
              (generate-string (get-users)))})
 
+(defn banking-accounts-index [req]
+  {:status  200
+   :headers {"Content-Type" "application-json"}
+   :body    (->>
+             (generate-string (get-banking-accounts)))})
+
 
 ; Simple Body Page
 (defn simple-body-page [req]
@@ -36,6 +42,7 @@
   (GET "/" [] simple-body-page)
   (GET "/request" [] request-example)
   (GET "/users" []  users-index)
+  (GET "/banking-accounts" []  banking-accounts-index)
   (route/not-found "Error, page not found!"))
 
 (defn -main
