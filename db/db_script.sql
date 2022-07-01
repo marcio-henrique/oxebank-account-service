@@ -4,6 +4,7 @@ use oxebank_account_service;
 CREATE table `users` (
 `id` bigint PRIMARY KEY AUTO_INCREMENT,
 `type` int,
+`name` varchar(80),
 `email` varchar(80),
 `status` int,
 `address` varchar(255),
@@ -25,9 +26,9 @@ CREATE TABLE `banking_accounts` (
 `client_id` int,
 `type` int,
 `status` int,
-`balance` int,
+`balance` decimal(10, 0),
 `password` varchar(80),
-`api_token` varchar(80) nullable
+`api_token` varchar(80)
 );
 
 ALTER TABLE `clients` ADD FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
