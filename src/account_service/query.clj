@@ -9,7 +9,7 @@
 
 (defn get-users []
   (select users
-          (fields :id :type :email :status :address :phone)
+          (fields :id :type :name :email :status :address :phone)
           (with clients (fields [:id :client_id] :mounthly_income :official_document [:type :client_type]))))
 
 (defentity banking_accounts
@@ -18,3 +18,8 @@
 (defn get-banking-accounts []
   (select banking_accounts
           (fields :id :client_id :type :status :balance)))
+
+(defn get-banking-account [id]
+  (select banking_accounts
+          (fields :id :client_id :type :status :balance)
+          (where {:id id})))

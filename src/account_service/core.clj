@@ -3,7 +3,9 @@
             [compojure.core :refer :all]
             [compojure.route :as route]
             [ring.middleware.defaults :refer :all]
+            [ring.util.request :refer :all]
             [ring.util.response :refer [response]]
+            [ring.util.anti-forgery :refer [anti-forgery-field]]
             [clojure.pprint :as pp]
             [clojure.string :as str]
             [clojure.data.json :as json]
@@ -11,18 +13,36 @@
             [cheshire.core :refer :all])
   (:gen-class))
 
+;users
 (defn users-index [req]
   {:status  200
    :headers {"Content-Type" "application-json"}
    :body    (->>
              (generate-string (get-users)))})
 
+;banking-accounts
 (defn banking-accounts-index [req]
   {:status  200
    :headers {"Content-Type" "application-json"}
    :body    (->>
              (generate-string (get-banking-accounts)))})
 
+(defn banking-accounts-show
+  [req]
+  (let [id (:id (:params req))
+        data (get-banking-account id)]
+    {:status  200
+     :headers {"Content-Type" "application-json"}
+     :body    (->>
+               (generate-string data))}))
+
+(defn banking-accounts-create [params]
+  (let [{:keys [client_id type]} params]
+    (println client_id type)
+    {:status  200
+     :headers {"Content-Type" "application-json"}
+     :body    (->>
+               (generate-string (client_id)))}))
 
 ; Simple Body Page
 (defn simple-body-page [req]
@@ -31,18 +51,26 @@
    :body    "Hello World"})
 
 ; request-example
-(defn request-example [req]
+(defn request-example [client_id]
   {:status  200
-   :headers {"Content-Type" "text/html"}
+   :headers {"Content-Type" "application-json"}
    :body    (->>
-             (pp/pprint req)
-             (str "Request Object: " req))})
+             (pp/pprint type)
+             (str "Request Object: " client_id))})
+
+(defn printPostBody [request]
+  {:status 200
+   :headers {"Content-Type" "application-json"}
+   :body (body-string request)})
 
 (defroutes app-routes
   (GET "/" [] simple-body-page)
   (GET "/request" [] request-example)
+  (POST "/request" request (printPostBody request))
   (GET "/users" []  users-index)
   (GET "/banking-accounts" []  banking-accounts-index)
+  (GET "/banking-accounts/:id" [] banking-accounts-show)
+  (POST "/banking-accounts" {:keys [params]}  banking-accounts-create)
   (route/not-found "Error, page not found!"))
 
 (defn -main
@@ -50,7 +78,7 @@
   [& args]
   (let [port (Integer/parseInt (or (System/getenv "PORT") "3000"))]
     ; Run the server with Ring.defaults middleware
-    (server/run-server (wrap-defaults #'app-routes site-defaults) {:port port})
+    (server/run-server (wrap-defaults app-routes (assoc-in site-defaults [:security :anti-forgery] false)) {:port port})
     ; Run the server without ring defaults
     ;(server/run-server #'app-routes {:port port})
     (println (str "Running webserver at http:/127.0.0.1:" port "/"))))
