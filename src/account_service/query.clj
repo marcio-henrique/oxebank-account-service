@@ -23,3 +23,7 @@
   (select banking_accounts
           (fields :id :client_id :type :status :balance)
           (where {:id id})))
+
+(defn add-banking-account [client_id type]
+  (insert banking_accounts
+          (values {:client_id client_id :type type :status 1 :balance 0})))

@@ -36,41 +36,48 @@
      :body    (->>
                (generate-string data))}))
 
-(defn banking-accounts-create [params]
-  (let [{:keys [client_id type]} params]
-    (println client_id type)
-    {:status  200
-     :headers {"Content-Type" "application-json"}
-     :body    (->>
-               (generate-string (client_id)))}))
+;; (defn banking-accounts-create [params]
+;;   {:keys [params]}
+;;   (let [{:keys [client_id type]} params]
+;;     (println type)
+;;     {:status  200
+;;      :headers {"Content-Type" "application-json"}
+;;      :body    (->>
+;;                (generate-string (client_id)))}))
 
 ; Simple Body Page
-(defn simple-body-page [req]
-  {:status  200
-   :headers {"Content-Type" "text/html"}
-   :body    "Hello World"})
+;; (defn simple-body-page [req]
+;;   {:status  200
+;;    :headers {"Content-Type" "text/html"}
+;;    :body    "Hello World"})
 
 ; request-example
-(defn request-example [client_id]
-  {:status  200
-   :headers {"Content-Type" "application-json"}
-   :body    (->>
-             (pp/pprint type)
-             (str "Request Object: " client_id))})
+;; (defn request-example [client_id]
+;;   {:status  200
+;;    :headers {"Content-Type" "application-json"}
+;;    :body    (->>
+;;              (pp/pprint type)
+;;              (str "Request Object: " client_id))})
 
-(defn printPostBody [request]
-  {:status 200
-   :headers {"Content-Type" "application-json"}
-   :body (body-string request)})
+;; (defn printPostBody [request]
+;;   {:status 200
+;;    :headers {"Content-Type" "application-json"}
+;;    :body (body-string request)})
 
 (defroutes app-routes
-  (GET "/" [] simple-body-page)
-  (GET "/request" [] request-example)
-  (POST "/request" request (printPostBody request))
+  ;; (GET "/" [] simple-body-page)
+  ;; (GET "/request" [] request-example)
+  ;; (POST "/request" request (printPostBody request))
   (GET "/users" []  users-index)
   (GET "/banking-accounts" []  banking-accounts-index)
   (GET "/banking-accounts/:id" [] banking-accounts-show)
-  (POST "/banking-accounts" {:keys [params]}  banking-accounts-create)
+  ;; (POST "/banking-accounts" [params] (banking-accounts-create params))
+  (POST "/banking-accounts" {:keys [params]}
+    (let [{:keys [client_id type]} params]
+      {:status  200
+       :headers {"Content-Type" "application-json"}
+       :body    (->>
+                 (generate-string (add-banking-account client_id type)))}))
   (route/not-found "Error, page not found!"))
 
 (defn -main
