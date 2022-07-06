@@ -12,6 +12,13 @@
           (fields :id :type :name :email :status :address :phone)
           (with clients (fields [:id :client_id] :mounthly_income :official_document [:type :client_type]))))
 
+(defn get-user [id]
+  (select users
+          (fields :id :type :name :email :status :address :phone)
+          (with clients (fields [:id :client_id] :mounthly_income :official_document [:type :client_type]))
+          (where {:id id})))
+
+
 (defentity banking_accounts
   (belongs-to clients {:fk :client_id}))
 

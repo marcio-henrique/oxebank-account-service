@@ -20,6 +20,15 @@
    :body    (->>
              (generate-string (get-users)))})
 
+(defn users-show
+  [req]
+  (let [id (:id (:params req))
+        data (get-user id)]
+    {:status  200
+     :headers {"Content-Type" "application-json"}
+     :body    (->>
+               (generate-string data))}))
+
 ;banking-accounts
 (defn banking-accounts-index [req]
   {:status  200
@@ -69,6 +78,8 @@
   ;; (GET "/request" [] request-example)
   ;; (POST "/request" request (printPostBody request))
   (GET "/users" []  users-index)
+  (GET "/users/:id" [] users-show)
+
   (GET "/banking-accounts" []  banking-accounts-index)
   (GET "/banking-accounts/:id" [] banking-accounts-show)
   ;; (POST "/banking-accounts" [params] (banking-accounts-create params))
