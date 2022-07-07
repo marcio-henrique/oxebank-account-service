@@ -34,3 +34,14 @@
 (defn add-banking-account [client_id type]
   (insert banking_accounts
           (values {:client_id client_id :type type :status 1 :balance 0})))
+
+
+(defn account-balance-deposit [id deposit-value]
+  (update banking_accounts 
+          (set-fields {:balance deposit-value})
+          (where {:id id})))
+
+;; (defn account-balance-withdraw [id withdraw-value]
+;;   (update banking_accounts 
+;;           (set-fields {:balance new_balance})
+;;           (where :id id)))

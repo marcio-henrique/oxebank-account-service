@@ -89,6 +89,13 @@
        :headers {"Content-Type" "application-json"}
        :body    (->>
                  (generate-string (add-banking-account client_id type)))}))
+  (POST "/deposit-account" {:keys [params]}
+  (let [{:keys [id value]} params]
+    {:status  200
+      :headers {"Content-Type" "application-json"}
+      :body    (->>
+                (generate-string (account-balance-deposit id value)))}))
+
   (route/not-found "Error, page not found!"))
 
 (defn -main
