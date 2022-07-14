@@ -35,11 +35,22 @@
   (insert banking_accounts
           (values {:client_id client_id :type type :status 1 :balance 0})))
 
-
+(defn get-account-balance [id]
+  (select banking_accounts 
+          (fields :balance)
+          (where {:id id})))
+        
 (defn account-balance-deposit [id deposit-value]
   (update banking_accounts 
           (set-fields {:balance deposit-value})
           (where {:id id})))
+
+        
+;; (defn account-balance-deposit [id deposit-value]
+;;   (update banking_accounts 
+;;           (set-fields {:balance (+ (select banking_accounts (fields :balance) (where {:id id})) deposit-value)})
+;;           (where {:id id})))
+
 
 ;; (defn account-balance-withdraw [id withdraw-value]
 ;;   (update banking_accounts 

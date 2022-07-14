@@ -54,13 +54,13 @@
 ;;      :body    (->>
 ;;                (generate-string (client_id)))}))
 
-; Simple Body Page
-;; (defn simple-body-page [req]
-;;   {:status  200
-;;    :headers {"Content-Type" "text/html"}
-;;    :body    "Hello World"})
+;;Simple Body Page
+(defn simple-body-page [req]
+  {:status  200
+   :headers {"Content-Type" "text/html"}
+   :body    (str "Saldo: " (get-in (get-account-balance 2) [0 :balance]))})
 
-; request-example
+;; request-example
 ;; (defn request-example [client_id]
 ;;   {:status  200
 ;;    :headers {"Content-Type" "application-json"}
@@ -73,8 +73,10 @@
 ;;    :headers {"Content-Type" "application-json"}
 ;;    :body (body-string request)})
 
+;; (println (str (get-account-balance 2)))
+
 (defroutes app-routes
-  ;; (GET "/" [] simple-body-page)
+  (GET "/" [] simple-body-page)
   ;; (GET "/request" [] request-example)
   ;; (POST "/request" request (printPostBody request))
   (GET "/users" []  users-index)
@@ -89,12 +91,16 @@
        :headers {"Content-Type" "application-json"}
        :body    (->>
                  (generate-string (add-banking-account client_id type)))}))
-  (POST "/deposit-account" {:keys [params]}
-  (let [{:keys [id value]} params]
-    {:status  200
-      :headers {"Content-Type" "application-json"}
-      :body    (->>
-                (generate-string (account-balance-deposit id value)))}))
+
+    (POST "/deposit-account" {:keys [params]}
+    (let [{:keys [id value]} params]
+      {:status  200
+        :headers {"Content-Type" "application-json"}
+        :body    (->>
+                  (generate-string (account-balance-deposit id (+ value 50))))}))
+
+              ;; saldo: (get-in (get-account-balance 2) [0 :balance])
+                
 
   (route/not-found "Error, page not found!"))
 
