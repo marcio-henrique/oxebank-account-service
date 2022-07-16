@@ -40,19 +40,7 @@
           (fields :balance)
           (where {:id id})))
         
-(defn account-balance-deposit [id deposit-value]
+(defn change-account-balance [id new-value]
   (update banking_accounts 
-          (set-fields {:balance deposit-value})
+          (set-fields {:balance new-value})
           (where {:id id})))
-
-        
-;; (defn account-balance-deposit [id deposit-value]
-;;   (update banking_accounts 
-;;           (set-fields {:balance (+ (select banking_accounts (fields :balance) (where {:id id})) deposit-value)})
-;;           (where {:id id})))
-
-
-;; (defn account-balance-withdraw [id withdraw-value]
-;;   (update banking_accounts 
-;;           (set-fields {:balance new_balance})
-;;           (where :id id)))

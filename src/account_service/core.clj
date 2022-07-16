@@ -13,6 +13,9 @@
             [cheshire.core :refer :all])
   (:gen-class))
 
+(defn parse-int [s]
+  (Integer. (re-find  #"\d+" s )))
+
 ;users
 (defn users-index [req]
   {:status  200
@@ -91,17 +94,21 @@
        :headers {"Content-Type" "application-json"}
        :body    (->>
                  (generate-string (add-banking-account client_id type)))}))
-
-    (POST "/deposit-account" {:keys [params]}
+  (POST "/deposit-account" {:keys [params]}
     (let [{:keys [id value]} params]
       {:status  200
         :headers {"Content-Type" "application-json"}
         :body    (->>
-                  (generate-string (account-balance-deposit id (+ value 50))))}))
-
-              ;; saldo: (get-in (get-account-balance 2) [0 :balance])
-                
-
+                    (change-account-balance id 
+                    (+ (get-in (get-account-balance id) [0 :balance]) (parse-int value))) (str "Depósito realizado."))}))
+  (POST "/withdrawal-account" {:keys [params]}
+    (let [{:keys [id value]} params]
+      {:status  200
+        :headers {"Content-Type" "application-json"}
+        :body    (->>
+                      (if (<= (parse-int value) (get-in (get-account-balance id) [0 :balance]))  
+                        (change-account-balance id (- (get-in (get-account-balance id) [0 :balance]) (parse-int value)))
+                        (str "Não foi possível realizar o saque.")))}))       
   (route/not-found "Error, page not found!"))
 
 (defn -main
