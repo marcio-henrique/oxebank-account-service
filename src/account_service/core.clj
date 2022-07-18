@@ -9,7 +9,7 @@
   (:gen-class))
 
 (defn parse-int [s]
-  (Integer. (re-find  #"\d+" s )))
+  (Integer. (re-find  #"\d+" s)))
 
 ;users
 (defn users-index [req]
@@ -27,6 +27,7 @@
      :body    (->>
                (generate-string data))}))
 
+
 ;banking-accounts
 (defn banking-accounts-index [req]
   {:status  200
@@ -43,36 +44,60 @@
      :body    (->>
                (generate-string data))}))
 
+(defn banking-accounts-create
+  [params]
+  (let [{:keys [client_id type]} params]
+    {:status  200
+     :headers {"Content-Type" "application-json"}
+     :body    (->>
+               (generate-string (add-banking-account client_id type)))}))
+
+
+;movimentations
+
+(defn deposit-account
+  [params]
+  (let [{:keys [id value]} params]
+    {:status  200
+     :headers {"Content-Type" "application-json"}
+     :body    (->>
+               (change-account-balance id
+                  (+ (get-in (get-account-balance id) [0 :balance]) (parse-int value))) (str "Depósito realizado."))}))
+
+(defn withdrawal-account-body
+  [id value]
+  (if (<= (parse-int value) (get-in (get-account-balance id) [0 :balance]))
+    (change-account-balance id (- (get-in (get-account-balance id) [0 :balance]) (parse-int value)))
+    (str "Não foi possível realizar o saque.")))
+
+(defn withdrawal-account
+  [params]
+  (let [{:keys [id value]} params]
+    {:status  200
+     :headers {"Content-Type" "application-json"}
+     :body    (->>
+               (withdrawal-account-body id value))}))
+
+
 
 (defroutes app-routes
 
-  (GET "/users" []  users-index)
+  (GET "/users" [] users-index)
   (GET "/users/:id" [] users-show)
 
-  (GET "/banking-accounts" []  banking-accounts-index)
+  (GET "/banking-accounts" [] banking-accounts-index)
   (GET "/banking-accounts/:id" [] banking-accounts-show)
 
   (POST "/banking-accounts" {:keys [params]}
-    (let [{:keys [client_id type]} params]
-      {:status  200
-       :headers {"Content-Type" "application-json"}
-       :body    (->>
-                 (generate-string (add-banking-account client_id type)))}))
+    (banking-accounts-create params))
+
   (POST "/deposit-account" {:keys [params]}
-    (let [{:keys [id value]} params]
-      {:status  200
-        :headers {"Content-Type" "application-json"}
-        :body    (->>
-                    (change-account-balance id 
-                    (+ (get-in (get-account-balance id) [0 :balance]) (parse-int value))) (str "Depósito realizado."))}))
+    (deposit-account params))
+
+
   (POST "/withdrawal-account" {:keys [params]}
-    (let [{:keys [id value]} params]
-      {:status  200
-        :headers {"Content-Type" "application-json"}
-        :body    (->>
-                      (if (<= (parse-int value) (get-in (get-account-balance id) [0 :balance]))  
-                        (change-account-balance id (- (get-in (get-account-balance id) [0 :balance]) (parse-int value)))
-                        (str "Não foi possível realizar o saque.")))}))       
+    (withdrawal-account params))
+
   (route/not-found "Error, page not found!"))
 
 (defn -main
