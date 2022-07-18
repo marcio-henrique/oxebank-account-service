@@ -4,11 +4,6 @@
             [compojure.route :as route]
             [ring.middleware.defaults :refer :all]
             [ring.util.request :refer :all]
-            [ring.util.response :refer [response]]
-            [ring.util.anti-forgery :refer [anti-forgery-field]]
-            [clojure.pprint :as pp]
-            [clojure.string :as str]
-            [clojure.data.json :as json]
             [account-service.query :refer :all]
             [cheshire.core :refer :all])
   (:gen-class))
@@ -48,46 +43,15 @@
      :body    (->>
                (generate-string data))}))
 
-;; (defn banking-accounts-create [params]
-;;   {:keys [params]}
-;;   (let [{:keys [client_id type]} params]
-;;     (println type)
-;;     {:status  200
-;;      :headers {"Content-Type" "application-json"}
-;;      :body    (->>
-;;                (generate-string (client_id)))}))
-
-;;Simple Body Page
-(defn simple-body-page [req]
-  {:status  200
-   :headers {"Content-Type" "text/html"}
-   :body    (str "Saldo: " (get-in (get-account-balance 2) [0 :balance]))})
-
-;; request-example
-;; (defn request-example [client_id]
-;;   {:status  200
-;;    :headers {"Content-Type" "application-json"}
-;;    :body    (->>
-;;              (pp/pprint type)
-;;              (str "Request Object: " client_id))})
-
-;; (defn printPostBody [request]
-;;   {:status 200
-;;    :headers {"Content-Type" "application-json"}
-;;    :body (body-string request)})
-
-;; (println (str (get-account-balance 2)))
 
 (defroutes app-routes
-  (GET "/" [] simple-body-page)
-  ;; (GET "/request" [] request-example)
-  ;; (POST "/request" request (printPostBody request))
+
   (GET "/users" []  users-index)
   (GET "/users/:id" [] users-show)
 
   (GET "/banking-accounts" []  banking-accounts-index)
   (GET "/banking-accounts/:id" [] banking-accounts-show)
-  ;; (POST "/banking-accounts" [params] (banking-accounts-create params))
+
   (POST "/banking-accounts" {:keys [params]}
     (let [{:keys [client_id type]} params]
       {:status  200
